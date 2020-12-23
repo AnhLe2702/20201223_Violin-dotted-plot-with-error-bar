@@ -10,12 +10,14 @@ data_melt <- data %>% group_by(Topic) %>%
 ggplot(data = data_melt, aes(x=Topic, y=Average_length.days)) +
   geom_violin(col="orange") +
   geom_point(position = position_jitter(0.2), color = "cyan3") +
-  geom_errorbar(aes(ymin = mean_time-se_time, ymax = mean_time+se_time),col = "red", width =  0.2)
+  geom_errorbar(aes(ymin = mean_time-se_time, ymax = mean_time+se_time),col = "red", width =  0.2) +
+  scale_x_discrete(limits=c("SARS-COV-2","Metastasis", "Chromosome", "Crystal_structure"))
 #Assign plot to myplot2
 myplot2 <- ggplot(data = data_melt, aes(x=Topic, y=Average_length.days)) +
   geom_violin(col="black") +
   geom_errorbar(aes(ymin = lower, ymax = upper),col = "red", width =  0.2) +
-  geom_point(position = position_jitter(0.2), color = "cyan3")
+  geom_point(position = position_jitter(0.2), color = "cyan3") +
+  scale_x_discrete(limits=c("SARS-COV-2","Metastasis", "Chromosome", "Crystal_structure"))
 #Final touch, optional to remove background colour
 myplot2 + theme(panel.background = element_rect(fill = "white"),
                 axis.line.x.bottom = element_line(colour = "black", size = 0.5),
