@@ -4,6 +4,7 @@ data <- read.csv(file.choose(), header = T)
 library(dplyr)
 library(ggplot2)
 #Compute upper and lower quantile and mean value from Average_length.days
+#Mutate function create a new variable without affecting exisiting ones, allow for later manipulation
 data_melt <- data %>% group_by(Topic) %>% 
   mutate (mean_time = mean(Average_length.days), sd_time = sd(Average_length.days), count = n(), se_time = (sd_time/(sqrt(count))))
 #Plot violin dotplot and superimpose error bar, this order ensures errorbars are brought to the front
@@ -11,7 +12,7 @@ ggplot(data = data_melt, aes(x=Topic, y=Average_length.days)) +
   geom_violin(col="orange") +
   geom_point(position = position_jitter(0.2), color = "cyan3") +
   geom_errorbar(aes(ymin = mean_time-se_time, ymax = mean_time+se_time),col = "red", width =  0.2) +
-  scale_x_discrete(limits=c("SARS-COV-2","Metastasis", "Chromosome", "Crystal_structure"))
+  scale_x_discrete(limits=c("SARS-COV-2","Metastasis", "Chromosome", "Crystal_structure")) #Order the X-axis according to the stated order
 #Assign plot to myplot2
 myplot2 <- ggplot(data = data_melt, aes(x=Topic, y=Average_length.days)) +
   geom_violin(col="black") +
