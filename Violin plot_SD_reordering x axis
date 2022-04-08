@@ -1,0 +1,27 @@
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+data <- read.csv(file.choose(), header = T)
+head(data, 5)
+data_melt <- data %>% group_by(Conditions) %>% 
+  mutate (mean_v = mean(Mean_v.micron.min.1.), sd_v = sd(Mean_v.micron.min.1.), count = n(), se_v = (sd_v/(sqrt(count))))
+ggplot(data = data_melt, aes(x=Conditions, y=Mean_v.micron.min.1., col=as.factor(Explant_ID))) +
+  geom_violin(col="black")+
+  geom_point(position = position_jitter(0.2))+
+  geom_errorbar(aes(ymin = mean_v-se_v, ymax = mean_v+se_v),col = "red", width =  0.2)
+My_plot <- ggplot(data = data_melt, aes(x=Conditions, y=Mean_v.micron.min.1., col=as.factor(Explant_ID))) +
+  geom_violin(col="black")+
+  geom_point(position = position_jitter(0.2))+
+  geom_errorbar(aes(ymin = mean_v-se_v, ymax = mean_v+se_v),col = "red", width =  0.2)
+My_plot2 <- My_plot + theme(panel.background = element_rect(fill = "white"),
+                axis.line.x.bottom = element_line(colour = "black", size = 0.5),
+                axis.line.y.left = element_line(colour = "black", size = 0.5),
+                axis.title.x = element_text(size=15),
+                axis.title.y.left = element_text(size=15),
+                axis.text.x = element_text(size=10),
+                axis.text.y = element_text(size=10))+
+  labs(x="Conditions", y="Mean velocity (um/min)")  
+library(forcats)
+#The forcats library allows to order the conditions in the order appearing in the dataset
+My_plot2 + aes(x = fct_inorder(Conditions)) + labs(x="Conditions", y="Mean velocity (um/min)") #The additional labs functions relabel the x axis because without this,
+                                                                                                the x axis will be labelled fct_inorder(Conditions)
