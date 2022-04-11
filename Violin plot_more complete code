@@ -38,3 +38,6 @@ My_plot2 + aes(x = factor(Conditions, level = level_order), y = Mean_v.micron.mi
                geom = "crossbar", 
                width = 0.5,
                colour = "red") #Add a mean line to the violin plot
+t.test(data$Mean_v.micron.min.1.~data$Conditions,mu=0,alt="two.sided",conf=0.95,var.eq=F,paired=F) #Perform a 2 sample t test, data$Mean_v.micron.min.1.~data$Conditions
+                                                                                                    means compare Mean_v.micron.min.1. in the dataset "data" according to
+                                                                                                    Conditions, mu is Ho meaning the difference is 0.
