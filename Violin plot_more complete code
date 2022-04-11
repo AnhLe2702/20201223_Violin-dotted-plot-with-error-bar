@@ -31,5 +31,6 @@ My_plot2 + aes(x = fct_inorder(Conditions)) + labs(x="Conditions", y="Mean veloc
 #OR, use:
 level_order <- c('Uncompressed', 'Compressed') #This creates a vector with specified name and order 
 My_plot2 + aes(x = factor(Conditions, level = level_order), y = Mean_v.micron.min.1.) +  #This incorporates into My_plot2
-  labs(x="Conditions", y="Mean velocity (um/min)") #This changes the x axis because without it, the x and y will be labelled "factor(Conditions, level = level_order)"
-                                                    and "Mean_v.micron.min.1." respectively
+  labs(x="Conditions", y="Mean velocity (um/min)") + #This changes the x axis because without it, the x and y will be labelled "factor(Conditions, level = level_order)"
+                                                     and "Mean_v.micron.min.1." respectively
+  guides(col= guide_legend(title= "Explant_ID")) # This changes the title of the legend from as.factor(Explant_ID) to just Explant_ID                                                  
