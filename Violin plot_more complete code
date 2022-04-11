@@ -1,6 +1,7 @@
 library(ggplot2)
 library(dplyr)
 library(tidyverse)
+library(ggpubr) #This package is for visualise statistical tests
 data <- read.csv(file.choose(), header = T)
 head(data, 5)
 data_melt <- data %>% group_by(Conditions) %>% 
@@ -38,6 +39,13 @@ My_plot2 + aes(x = factor(Conditions, level = level_order), y = Mean_v.micron.mi
                geom = "crossbar", 
                width = 0.5,
                colour = "red") #Add a mean line to the violin plot
+
+#Statistical test
+shapiro.test(data$Mean_v.micron.min.1.[data$Conditions=="Uncompressed"]) #Square braket extracts the "Uncompressed" data only from the "Conditions" column, to allow
+                                                                          the Shairo Wilk test to be performed on the "Mean_v.micron.min.1." values of just the Uncompressed condition
+shapiro.test(data$Mean_v.micron.min.1.[data$Conditions=="Compressed"])
+ggqqplot(data$Mean_v.micron.min.1.[data$Conditions=="Uncompressed"]) #QQ plot of the Uncompressed Mean_v data.
+ggqqplot(data$Mean_v.micron.min.1.[data$Conditions=="Compressed"])
 t.test(data$Mean_v.micron.min.1.~data$Conditions,mu=0,alt="two.sided",conf=0.95,var.eq=F,paired=F) #Perform a 2 sample t test, data$Mean_v.micron.min.1.~data$Conditions
                                                                                                     means compare Mean_v.micron.min.1. in the dataset "data" according to
                                                                                                     Conditions, mu is Ho meaning the difference is 0.
