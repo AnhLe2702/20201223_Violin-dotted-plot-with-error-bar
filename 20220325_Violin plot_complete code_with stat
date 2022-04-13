@@ -82,4 +82,5 @@ My_plot3 +
                                                                                     #inherit.aes=F indicates that this new geom_ function won't take any previous
                                                                                     aes arguments from previous plot. If set to T, it will take the Explant_ID object
                                                                                     which does not exist here, so will give an error.
-  geom_text(data = tibble(x=c(1.5), y=c(1.17)), label = "n.s", aes(x=x,y=y), size=4, inherit.aes=F) #This is to add the "n.s" on top of the line.
+  geom_text(data = tibble(x=c(1.5), y=c(1.17)), label = "n.s", aes(x=x,y=y), size=4, inherit.aes=F)+ #This is to add the "n.s" on top of the line.
+  ylim(0.2,1.2) #Set limit for y axis from 0.2 to 1.2
