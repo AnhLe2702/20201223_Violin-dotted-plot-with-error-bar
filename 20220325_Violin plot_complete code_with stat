@@ -2,18 +2,38 @@ library(ggplot2)
 library(dplyr)
 library(tidyverse)
 library(ggpubr) #This package is for visualise statistical tests
+
+#This is to load the data file and check the first 5 rows in the file
 data <- read.csv(file.choose(), header = T)
 head(data, 5)
+
+#Compute the mean, sd and se, which will be needed to make error bars
 data_melt <- data %>% group_by(Conditions) %>% 
   mutate (mean_v = mean(Mean_v.micron.min.1.), sd_v = sd(Mean_v.micron.min.1.), count = n(), se_v = (sd_v/(sqrt(count))))
-ggplot(data = data_melt, aes(x=Conditions, y=Mean_v.micron.min.1., col=as.factor(Explant_ID))) +
-  geom_violin(col="black")+
-  geom_point(position = position_jitter(0.2))+
-  geom_errorbar(aes(ymin = mean_v-se_v, ymax = mean_v+se_v),col = "red", width =  0.2)
+
+#Counting the N number for each condition
+#This count the number for each condition
+N_number <- data %>% 
+  count(Conditions)
+N_number
+
+#This pull out the N number from the specified condition and assign it to a variable called Uncompressed_n or Compressed_n, which will be used later for labelling
+Uncompressed_n <- N_number %>%
+  filter(Conditions == "Uncompressed") %>%
+  pull(n)
+
+Compressed_n <- N_number %>%
+  filter(Conditions == "Compressed") %>%
+  pull(n)
+  
+#Plot the first plot using the computed data from data_melt to generate error bars with x and y as Conditions and Mean_v.micron.min.1. and colour code eaach datapoint
+according to the Explant_ID and assign this plot to a variable called "My_plot"
 My_plot <- ggplot(data = data_melt, aes(x=Conditions, y=Mean_v.micron.min.1., col=as.factor(Explant_ID))) +
   geom_violin(col="black")+
   geom_point(position = position_jitter(0.2))+
   geom_errorbar(aes(ymin = mean_v-se_v, ymax = mean_v+se_v),col = "red", width =  0.2)
+
+#Adjust the style of the My_plot plot  
 My_plot2 <- My_plot + theme(panel.background = element_rect(fill = "white"),
                 axis.line.x.bottom = element_line(colour = "black", size = 0.5),
                 axis.line.y.left = element_line(colour = "black", size = 0.5),
@@ -24,8 +44,8 @@ My_plot2 <- My_plot + theme(panel.background = element_rect(fill = "white"),
   labs(x="Conditions", y="Mean velocity (um/min)")  
 
 #To change the order on the x axis, can use:
-library(forcats)
 #The forcats library allows to order the conditions in the order appearing in the dataset
+library(forcats)
 My_plot2 + aes(x = fct_inorder(Conditions)) + labs(x="Conditions", y="Mean velocity (um/min)") #The additional labs functions relabel the x axis because without this,
                                                                                                 the x axis will be labelled fct_inorder(Conditions)
 
@@ -38,7 +58,10 @@ My_plot3 <- My_plot2 + aes(x = factor(Conditions, level = level_order), y = Mean
   stat_summary(fun = "mean",
                geom = "crossbar", 
                width = 0.5,
-               colour = "red") #Add a mean line to the violin plot
+               colour = "red")+ #Add a mean line to the violin plot
+               scale_x_discrete(labels=c(glue("Uncompressed\n(N={Uncompressed_n})"), #Modify the x labelling for each condition, \n to make it go down 1 line so the
+                                                                                      N number will be displayed below the condition name.
+                                         glue("Compressed\n(N={Compressed_n})")))
 
 #Statistical test
 shapiro.test(data$Mean_v.micron.min.1.[data$Conditions=="Uncompressed"]) #Square braket extracts the "Uncompressed" data only from the "Conditions" column, to allow
@@ -49,7 +72,8 @@ ggqqplot(data$Mean_v.micron.min.1.[data$Conditions=="Compressed"])
 t.test(data$Mean_v.micron.min.1.~data$Conditions,mu=0,alt="two.sided",conf=0.95,var.eq=F,paired=F) #Perform a 2 sample t test, data$Mean_v.micron.min.1.~data$Conditions
                                                                                                     means compare Mean_v.micron.min.1. in the dataset "data" according to
                                                                                                     Conditions, mu is Ho meaning the difference is 0.
-#Adding line aabove the graph to denote significance
+
+#Adding line above the graph to denote significance
 My_plot3 +
   geom_line(data = tibble(x=c(1,2), y=c(1.15,1.15)), aes(x=x,y=y), inherit.aes=F)+ #tibble is a dataframe function, x=c(1,2) indicate the line to stretch between 
                                                                                     group 1 and 2 on the x axis, y=c(1.15,1.15) indicates the line to be at position 
