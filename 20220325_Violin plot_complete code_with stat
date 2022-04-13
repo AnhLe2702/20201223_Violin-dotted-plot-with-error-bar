@@ -31,7 +31,7 @@ My_plot2 + aes(x = fct_inorder(Conditions)) + labs(x="Conditions", y="Mean veloc
 
 #OR, use:
 level_order <- c('Uncompressed', 'Compressed') #This creates a vector with specified name and order 
-My_plot2 + aes(x = factor(Conditions, level = level_order), y = Mean_v.micron.min.1.) +  #This incorporates into My_plot2
+My_plot3 <- My_plot2 + aes(x = factor(Conditions, level = level_order), y = Mean_v.micron.min.1.) +  #This incorporates into My_plot2
   labs(x="Conditions", y="Mean velocity (um/min)") + #This changes the x axis because without it, the x and y will be labelled "factor(Conditions, level = level_order)"
                                                      and "Mean_v.micron.min.1." respectively
   guides(col= guide_legend(title= "Explant_ID")) + #This changes the title of the legend from as.factor(Explant_ID) to just Explant_ID                                                  
@@ -49,3 +49,13 @@ ggqqplot(data$Mean_v.micron.min.1.[data$Conditions=="Compressed"])
 t.test(data$Mean_v.micron.min.1.~data$Conditions,mu=0,alt="two.sided",conf=0.95,var.eq=F,paired=F) #Perform a 2 sample t test, data$Mean_v.micron.min.1.~data$Conditions
                                                                                                     means compare Mean_v.micron.min.1. in the dataset "data" according to
                                                                                                     Conditions, mu is Ho meaning the difference is 0.
+#Adding line aabove the graph to denote significance
+My_plot3 +
+  geom_line(data = tibble(x=c(1,2), y=c(1.15,1.15)), aes(x=x,y=y), inherit.aes=F)+ #tibble is a dataframe function, x=c(1,2) indicate the line to stretch between 
+                                                                                    group 1 and 2 on the x axis, y=c(1.15,1.15) indicates the line to be at position 
+                                                                                    y=1.15 on the y axis
+                                                                                    #aes(x=x,y=y) is a requirement for "geom_" function, without it, it wont work!
+                                                                                    #inherit.aes=F indicates that this new geom_ function won't take any previous
+                                                                                    aes arguments from previous plot. If set to T, it will take the Explant_ID object
+                                                                                    which does not exist here, so will give an error.
+  geom_text(data = tibble(x=c(1.5), y=c(1.17)), label = "n.s", aes(x=x,y=y), size=4, inherit.aes=F) #This is to add the "n.s" on top of the line.
